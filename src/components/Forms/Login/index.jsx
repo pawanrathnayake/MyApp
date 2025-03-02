@@ -18,7 +18,7 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        'https://my-app-backend-wmzc.onrender.com/api/login',
+        'https://my-app-backend-wmzc.onrender.com/api/login/',
         { email: data.email, password: data.password },
         { withCredentials: true }
       );
