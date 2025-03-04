@@ -1,23 +1,23 @@
 import React from 'react';
 import "./index.css";
-import { Link } from 'react-router-dom';
-import ArroIcon from '../../assets/Svg/ArrowIcon';
 
-const index = () => {
+const Header = () => {
     return (
         <>
-            <ul>
-                <li>
-                <ArroIcon customClass="max-w-[50px]" />
-                </li>
-
-                <li>
-                    {/* <Link to="/homepage">Home page</Link> */}
-                </li>
-            </ul>
+            <nav className="">
+                <div className="mx-auto max-w-auto px-2 sm:px-6 lg:px-8">
+                    <div className="relative flex h-16 items-center justify-between">
+                        <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                            <div className="flex shrink-0 items-center">
+                                <img className="h-8 w-auto" src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt="company_logo" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
         </>
 
     )
 }
 
-export default index
+export default Header;

@@ -118,7 +118,7 @@ const Registration = () => {
         <div className="register-redirect text-center">
           <button 
             onClick={handleRedirectToLogin} 
-            className="mt-4 text-black py-2 px-4 rounded hover:bg-blue-700">
+            className="mt-4 text-black py-2 px-4 rounded hover:underline">
             Already have an account? Login here
           </button>
         </div>

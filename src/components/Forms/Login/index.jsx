@@ -73,7 +73,7 @@ const Login = () => {
                 type="password"
                 {...register('password', { required: "Password is required" })}
               />
-              {errors.password && <span className="error">{errors.password.message}</span>}
+              {errors.password && <span className="error text-red-500 text-xs">{errors.password.message}</span>}
             </div>
           </div>
 
@@ -103,7 +103,7 @@ const Login = () => {
         <div className="register-redirect">
           <button 
             onClick={handleRedirectToRegister} 
-            className="mt-4 text-black py-2 px-4 rounded hover:bg-blue-700">
+            className="mt-4 text-black py-2 px-4 rounded hover:underline">
             No account? Register here
           </button>
         </div>
