@@ -1,37 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 
 const EditProfilePage = () => {
   const { userId } = useParams();
   const [profileData, setProfileData] = useState({
-    salutation: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    dateOfBirth: '',
-    gender: '',
-    maritalStatus: '',
-    spouseFirstName: '',
-    spouseLastName: '',
-    hobbies: '',
-    favoriteSport: '',
-    preferredMusic: '',
-    preferredMovies: '',
-    homeAddress: '',
-    country: '',
-    postalCode: '',
+    profileImage: "",
+    salutation: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    dateOfBirth: "",
+    gender: "",
+    maritalStatus: "",
+    spouseFirstName: "",
+    spouseLastName: "",
+    hobbies: "",
+    favoriteSport: "",
+    preferredMusic: "",
+    preferredMovies: "",
+    homeAddress: "",
+    country: "",
+    postalCode: "",
   });
+
   const [initialProfileData, setInitialProfileData] = useState({});
-  const [activeTab, setActiveTab] = useState('Basic Details');
-  const [error, setError] = useState('');
-  const token = localStorage.getItem('authToken');
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [activeTab, setActiveTab] = useState("Basic Details");
+  const [error, setError] = useState("");
+  
+  const token = localStorage.getItem("authToken");
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
+  // Fetch Profile Data on Component Load
   useEffect(() => {
     if (!token) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
 
@@ -41,53 +46,112 @@ const EditProfilePage = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setProfileData(response.data);
-        setInitialProfileData(response.data);  // Save the initial data for resetting
+        setInitialProfileData(response.data); // Save initial data for reset
       } catch (error) {
-        setError('Error fetching profile data');
-        console.error('Error fetching profile data:', error);
+        setError("Error fetching profile data");
+        console.error("Error fetching profile data:", error);
       }
     };
+    
     fetchProfileData();
   }, [API_URL, token, userId, navigate]);
 
+  // Handle Input Changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfileData({ ...profileData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.put(`${API_URL}/users/${userId}`, profileData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      alert('Profile updated successfully');
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      alert('Error updating profile');
+  // Handle Image Selection
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+
+      // Preview Image
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileData((prev) => ({ ...prev, profileImage: reader.result }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleCancel = () => {
-    setProfileData(initialProfileData); // Reset to initial data
+  // Submit Form (Update Profile)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      let imageUrl = profileData.profileImage;
+
+      // Upload New Image If Selected
+      if (selectedImage) {
+        const formData = new FormData();
+        formData.append("image", selectedImage);
+
+        const imageResponse = await axios.post(`${API_URL}/upload/profile-image`, formData, {
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
+        });
+
+        imageUrl = imageResponse.data.imageUrl;
+      }
+
+      // Update Profile Data
+      await axios.put(
+        `${API_URL}/users/${userId}`,
+        { ...profileData, profileImage: imageUrl },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      alert("Profile updated successfully");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Error updating profile");
+    }
   };
 
+  // Reset to Initial Data
+  const handleCancel = () => {
+    setProfileData(initialProfileData);
+  };
+
+  // Navigate Back to Profile Page
   const handleGoBack = () => {
-    navigate(`/dashboard`); // Navigate back to the profile page
+    navigate(`/dashboard`);
   };
 
   return (
     <div className="bg-gray-100 min-h-screen flex justify-center p-8 bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%">
       <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-lg flex">
-        <div className="w-1/4 border-r pr-4">
+        
+        {/* Sidebar Navigation */}
+        <div className="w-1/4 border-r pr-4 flex flex-col items-center">
+          {/* Profile Image Upload */}
+          <div className="w-24 h-24 mb-4 relative">
+            <img
+              src={profileData?.profileImage || "https://via.placeholder.com/150"}
+              alt="Profile"
+              className="w-full h-full rounded-full object-cover border border-gray-300 shadow-md"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="absolute inset-0 opacity-0 cursor-pointer"
+            />
+          </div>
+
+          {/* Navigation Tabs */}
           <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
-          {['Basic Details', 'Additional Details', 'Spouse Details', 'Personal Preferences'].map((tab) => (
-            profileData.maritalStatus === 'Married' || tab !== 'Spouse Details' ? (
+          {["Basic Details", "Additional Details", "Spouse Details", "Personal Preferences"].map((tab) =>(
+            profileData.maritalStatus === "Married" || tab !== "Spouse Details" ? (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`block w-full text-left px-4 py-2 mb-2 text-lg font-medium rounded-lg ${activeTab === tab ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-200'}`}
+                className={`block w-full text-left px-4 py-2 mb-2 text-lg font-medium rounded-lg ${
+                  activeTab === tab ? "bg-blue-500 text-white" : "text-gray-600 hover:bg-gray-200"
+                }`}
               >
                 {tab}
               </button>
@@ -95,10 +159,13 @@ const EditProfilePage = () => {
           ))}
         </div>
 
+        {/* Form Section */}
         <div className="w-3/4 pl-6">
           {error && <div className="text-red-500">{error}</div>}
           <form onSubmit={handleSubmit}>
-            {activeTab === 'Basic Details' && (
+
+            {/* Basic Details */}
+            {activeTab === "Basic Details" && (
               <>
                 <label>Salutation:</label>
                 <select name="salutation" value={profileData.salutation} onChange={handleChange} className="w-full border p-2 rounded mb-2">
@@ -115,7 +182,9 @@ const EditProfilePage = () => {
                 <input type="email" name="email" value={profileData.email} onChange={handleChange} className="w-full border p-2 rounded mb-2" />
               </>
             )}
-            {activeTab === 'Additional Details' && (
+
+            {/* Additional Details */}
+            {activeTab === "Additional Details" && (
               <>
                 <label>Home Address:</label>
                 <input type="text" name="homeAddress" value={profileData.homeAddress} onChange={handleChange} className="w-full border p-2 rounded mb-2" />
@@ -154,8 +223,10 @@ const EditProfilePage = () => {
               <button type="button" onClick={handleCancel} className="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
               <button type="button" onClick={handleGoBack} className="bg-green-500 text-white px-4 py-2 rounded">Go Back to Profile</button>
             </div>
+
           </form>
         </div>
+
       </div>
     </div>
   );
