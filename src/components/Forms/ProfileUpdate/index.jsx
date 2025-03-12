@@ -51,7 +51,7 @@ const EditProfilePage = () => {
 
     const fetchProfileData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/users/${userId}`, {
+        const response = await axios.get(`${API_URL}/user/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setProfileData(response.data);
@@ -107,7 +107,7 @@ const EditProfilePage = () => {
 
       // Update Profile Data
       await axios.put(
-        `${API_URL}/users/${userId}`,
+        `${API_URL}/user/${userId}`,
         { ...profileData, profileImage: imageUrl },
         { headers: { Authorization: `Bearer ${token}` } }
       );
