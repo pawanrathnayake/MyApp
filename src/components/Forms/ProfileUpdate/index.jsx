@@ -3,7 +3,11 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 const EditProfilePage = () => {
-  const { userId } = useParams();
+  // Try to get userId from URL params, then fallback to localStorage
+  const { userId: paramUserId } = useParams();
+  const storedUserId = localStorage.getItem("userId");
+  const userId = paramUserId || storedUserId;
+
   const [profileData, setProfileData] = useState({
     profileImage: "",
     salutation: "",
@@ -28,15 +32,20 @@ const EditProfilePage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [activeTab, setActiveTab] = useState("Basic Details");
   const [error, setError] = useState("");
-  
+
   const token = localStorage.getItem("authToken");
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // Fetch Profile Data on Component Load
   useEffect(() => {
     if (!token) {
       navigate("/login");
+      return;
+    }
+
+    if (!userId) {
+      setError("User ID is missing.");
+      console.error("User ID is missing. Make sure it is stored or passed in the route.");
       return;
     }
 
@@ -52,7 +61,7 @@ const EditProfilePage = () => {
         console.error("Error fetching profile data:", error);
       }
     };
-    
+
     fetchProfileData();
   }, [API_URL, token, userId, navigate]);
 
@@ -130,7 +139,7 @@ const EditProfilePage = () => {
           {/* Profile Image Upload */}
           <div className="w-24 h-24 mb-4 relative">
             <img
-              src={profileData?.profileImage || "https://via.placeholder.com/150"}
+              src={profileData?.profileImage || "https://placehold.co/150x150"}
               alt="Profile"
               className="w-full h-full rounded-full object-cover border border-gray-300 shadow-md"
             />
@@ -144,7 +153,7 @@ const EditProfilePage = () => {
 
           {/* Navigation Tabs */}
           <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
-          {["Basic Details", "Additional Details", "Spouse Details", "Personal Preferences"].map((tab) =>(
+          {["Basic Details", "Additional Details", "Spouse Details", "Personal Preferences"].map((tab) =>
             profileData.maritalStatus === "Married" || tab !== "Spouse Details" ? (
               <button
                 key={tab}
@@ -156,7 +165,7 @@ const EditProfilePage = () => {
                 {tab}
               </button>
             ) : null
-          ))}
+          )}
         </div>
 
         {/* Form Section */}
@@ -198,7 +207,9 @@ const EditProfilePage = () => {
                 </select>
               </>
             )}
-            {activeTab === 'Spouse Details' && profileData.maritalStatus === 'Married' && (
+
+            {/* Spouse Details */}
+            {activeTab === "Spouse Details" && profileData.maritalStatus === "Married" && (
               <>
                 <label>Spouse First Name:</label>
                 <input type="text" name="spouseFirstName" value={profileData.spouseFirstName} onChange={handleChange} className="w-full border p-2 rounded mb-2" />
@@ -206,7 +217,9 @@ const EditProfilePage = () => {
                 <input type="text" name="spouseLastName" value={profileData.spouseLastName} onChange={handleChange} className="w-full border p-2 rounded mb-2" />
               </>
             )}
-            {activeTab === 'Personal Preferences' && (
+
+            {/* Personal Preferences */}
+            {activeTab === "Personal Preferences" && (
               <>
                 <label>Hobbies:</label>
                 <input type="text" name="hobbies" value={profileData.hobbies} onChange={handleChange} className="w-full border p-2 rounded mb-2" />
@@ -218,6 +231,7 @@ const EditProfilePage = () => {
                 <input type="text" name="preferredMovies" value={profileData.preferredMovies} onChange={handleChange} className="w-full border p-2 rounded mb-2" />
               </>
             )}
+
             <div className="flex gap-4 mt-4">
               <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Save Changes</button>
               <button type="button" onClick={handleCancel} className="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
