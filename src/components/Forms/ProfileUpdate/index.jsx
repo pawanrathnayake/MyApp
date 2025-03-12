@@ -133,7 +133,7 @@ const EditProfilePage = () => {
   return (
     <div className="bg-gray-100 min-h-screen flex justify-center p-8 bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%">
       <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-lg flex">
-        
+
         {/* Sidebar Navigation */}
         <div className="w-1/4 border-r pr-4 flex flex-col items-center">
           {/* Profile Image Upload */}
@@ -158,9 +158,8 @@ const EditProfilePage = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`block w-full text-left px-4 py-2 mb-2 text-lg font-medium rounded-lg ${
-                  activeTab === tab ? "bg-blue-500 text-white" : "text-gray-600 hover:bg-gray-200"
-                }`}
+                className={`block w-full text-left px-4 py-2 mb-2 text-lg font-medium rounded-lg ${activeTab === tab ? "bg-blue-500 text-white" : "text-gray-600 hover:bg-gray-200"
+                  }`}
               >
                 {tab}
               </button>
