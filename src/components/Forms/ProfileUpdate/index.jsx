@@ -102,7 +102,7 @@ const EditProfilePage = () => {
           headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
         });
 
-        imageUrl = imageResponse.data.imageUrl;
+        imageUrl = imageResponse.data.imageUrl; 
       }
 
       // Update Profile Data
