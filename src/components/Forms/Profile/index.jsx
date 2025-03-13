@@ -53,7 +53,7 @@ const ProfilePage = () => {
       <div className="w-full max-w-4xl bg-white p-6 rounded-lg flex relative">
         {/* Vertical Tabs */}
         <div className="w-1/4 border-r pr-4">
-          <h2 className="text-xl font-bold mb-4">
+          <h2 className="text-xl font-bold mb-4 text-center">
             {profileData ? `${profileData.firstName} ${profileData.lastName}` : 'Profile'}
           </h2>
           {/* Profile Image */}
