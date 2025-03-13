@@ -83,6 +83,17 @@ const ProfilePage = () => {
             </button>
           </div>
 
+          {/* Profile Image */}
+          {profileData?.profileImage && (
+            <div className="flex justify-center mb-4">
+              <img
+                src={profileData.profileImage}
+                alt="Profile"
+                className="w-32 h-32 rounded-full border-2 border-gray-300 object-cover"
+              />
+            </div>
+          )}
+
           {activeTab === 'Basic Details' && (
             <div>
               <h3 className="text-lg font-semibold text-gray-700 mb-4">Basic Details</h3>

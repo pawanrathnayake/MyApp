@@ -21,13 +21,17 @@ const EditProfilePage = () => {
     homeAddress: '',
     country: '',
     postalCode: '',
+    profileImage: '',
   });
   const [initialProfileData, setInitialProfileData] = useState({});
   const [activeTab, setActiveTab] = useState('Basic Details');
   const [error, setError] = useState('');
+  const [imageFile, setImageFile] = useState(null);
   const token = localStorage.getItem('authToken');
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
+  const CLOUDINARY_URL = import.meta.env.VITE_CLOUDINARY_URL;
+  const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
   useEffect(() => {
     if (!token) {
@@ -53,6 +57,24 @@ const EditProfilePage = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfileData({ ...profileData, [name]: value });
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageFile(file);
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    
+    try {
+      const response = await axios.post(CLOUDINARY_URL, formData);
+      setProfileData({ ...profileData, profileImage: response.data.secure_url });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Image upload failed');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -100,6 +122,9 @@ const EditProfilePage = () => {
           <form onSubmit={handleSubmit}>
             {activeTab === 'Basic Details' && (
               <>
+                <label>Profile Image:</label>
+                <input type="file" onChange={handleImageUpload} className="w-full border p-2 rounded mb-2" />
+                {profileData.profileImage && <img src={profileData.profileImage} alt="Profile" className="w-24 h-24 rounded-full mt-2" />}
                 <label>Salutation:</label>
                 <select name="salutation" value={profileData.salutation} onChange={handleChange} className="w-full border p-2 rounded mb-2">
                   <option value="Mr">Mr.</option>
