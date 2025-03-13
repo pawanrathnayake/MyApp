@@ -53,7 +53,20 @@ const ProfilePage = () => {
       <div className="w-full max-w-4xl bg-white p-6 rounded-lg flex relative">
         {/* Vertical Tabs */}
         <div className="w-1/4 border-r pr-4">
-          <h2 className="text-xl font-bold mb-4">My Profile</h2>
+          <h2 className="text-xl font-bold mb-4">
+            {profileData ? `${profileData.firstName} ${profileData.lastName}` : 'Profile'}
+          </h2>
+          {/* Profile Image */}
+          {profileData?.profileImage && (
+            <div className="flex justify-center mb-4 mt-4">
+              <img
+                src={profileData.profileImage}
+                alt="Profile"
+                className="w-32 h-32 rounded-full border-2 border-gray-300 object-cover"
+              />
+            </div>
+          )}
+
           {tabs.map((tab) => (
             <button
               key={tab}
@@ -82,17 +95,6 @@ const ProfilePage = () => {
               Logout
             </button>
           </div>
-
-          {/* Profile Image */}
-          {profileData?.profileImage && (
-            <div className="flex justify-center mb-4 mt-4">
-              <img
-                src={profileData.profileImage}
-                alt="Profile"
-                className="w-32 h-32 rounded-full border-2 border-gray-300 object-cover"
-              />
-            </div>
-          )}
 
           {activeTab === 'Basic Details' && (
             <div>
