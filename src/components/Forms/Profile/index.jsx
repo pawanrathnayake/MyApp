@@ -85,7 +85,7 @@ const ProfilePage = () => {
 
           {/* Profile Image */}
           {profileData?.profileImage && (
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-4 mt-4">
               <img
                 src={profileData.profileImage}
                 alt="Profile"
